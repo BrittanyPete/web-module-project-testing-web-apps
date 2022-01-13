@@ -29,7 +29,7 @@ test('renders THREE error messages if user enters no values into any fields.', a
     const button = screen.getByRole('button');
     userEvent.click(button)
 
-    waitFor(async () => {
+    await waitFor(async () => {
         const errors = screen.getAllByTestId('error');
         expect(errors).toHaveLength(3);
     });
@@ -38,7 +38,18 @@ test('renders THREE error messages if user enters no values into any fields.', a
 
 test('renders ONE error message if user enters a valid first name and last name but no email.', async () => {
     render(<ContactForm />);
-    
+    const firstName = screen.getByPlaceholderText(/edd/i);
+    userEvent.type(firstName, 'Edward');
+    const lastName = screen.getByPlaceholderText(/Burke/i);
+    userEvent.type(lastName, 'Burke');
+    const button = screen.getByRole('button');
+    userEvent.click(button);
+
+    await waitFor(async () => {
+        const errors = screen.getAllByTestId('error');
+        expect(errors).toHaveLength(1);
+    });
+
 });
 
 test('renders "email must be a valid email address" if an invalid email is entered', async () => {
