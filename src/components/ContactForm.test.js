@@ -63,8 +63,6 @@ test('renders "email must be a valid email address" if an invalid email is enter
     const errorMessage = 'Error: email must be a valid email address.';
     const output = screen.queryByText(errorMessage);
     expect(output).toBeInTheDocument();
-
-
 });
 
 test('renders "lastName is a required field" if an last name is not entered and the submit button is clicked', async () => {
@@ -76,14 +74,44 @@ test('renders "lastName is a required field" if an last name is not entered and 
         const errorMessage = 'Error: lastName is a required field.';
         const output = screen.queryByText(errorMessage);
         expect(output).toBeInTheDocument();
-    })
-
+    });
 });
 
 test('renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.', async () => {
     render(<ContactForm />);
+    const firstName = screen.getByPlaceholderText(/edd/i);
+    userEvent.type(firstName, 'Edward');
+    const lastName = screen.getByPlaceholderText(/Burke/i);
+    userEvent.type(lastName, 'Burke');
+    const email = screen.getByPlaceholderText('bluebill1049@hotmail.com');
+    userEvent.type(email, 'abc@gmail.com');
+    const button = screen.getByRole('button');
+    userEvent.click(button);
+
+    await waitFor(async () => {
+        const output = screen.queryByText('First Name:', 'Last Name:', 'Email:');
+        const message = screen.queryByText('Message:');
+        expect(output).toBeInTheDocument();
+        expect(message).not.toBeInTheDocument();
+    });
 });
 
 test('renders all fields text when all fields are submitted.', async () => {
     render(<ContactForm />);
+    const firstName = screen.getByPlaceholderText(/edd/i);
+    userEvent.type(firstName, 'Edward');
+    const lastName = screen.getByPlaceholderText(/Burke/i);
+    userEvent.type(lastName, 'Burke');
+    const email = screen.getByPlaceholderText('bluebill1049@hotmail.com');
+    userEvent.type(email, 'abc@gmail.com');
+    const message = screen.getByLabelText(/message/i);
+    userEvent.type(message, 'This is a message');
+    const button = screen.getByRole('button');
+    userEvent.click(button);
+
+    await waitFor(async () => {
+        const output = screen.queryByText('First Name:', 'Last Name:', 'Email:', 'Message:');
+        expect(output).toBeInTheDocument();
+    });
+
 });
